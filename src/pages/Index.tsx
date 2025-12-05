@@ -1,78 +1,91 @@
 import { useState } from "react";
-import { Leaf, PawPrint, Sparkles, ArrowRight } from "lucide-react";
+import { Leaf, PawPrint, Sparkles, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UploadZone } from "@/components/UploadZone";
 import { DiagnosticResult, DiagnosticData } from "@/components/DiagnosticResult";
 import { AnalyzingState } from "@/components/AnalyzingState";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import heroBg from "@/assets/hero-bg.png";
-
-// Mock diagnostic results for demo
-const mockPlantResult: DiagnosticData = {
-  conditionName: "Tomato — Late Blight (Phytophthora infestans)",
-  category: "plant",
-  symptoms: [
-    "Dark brown leaf spots",
-    "White fuzzy growth on underside",
-    "Stem lesions",
-    "Fruit rot beginning",
-  ],
-  severity: "medium",
-  organicTreatment:
-    "Apply copper-based fungicide (Bordeaux mixture). Remove and destroy affected leaves. Improve air circulation by pruning. Use mulch to prevent soil splash. Consider companion planting with basil.",
-  chemicalTreatment:
-    "Apply chlorothalonil or mancozeb fungicide every 7-10 days. For severe cases, systemic fungicides like metalaxyl may be recommended. Always follow label instructions and observe pre-harvest intervals.",
-  monitoring: [
-    "Take weekly photos to track progression",
-    "Check surrounding plants for spread",
-    "Monitor humidity levels (keep below 90%)",
-    "Inspect new growth for symptoms",
-    "If no improvement in 2 weeks, seek professional help",
-  ],
-  confidenceScore: 87,
-};
-
-const mockAnimalResult: DiagnosticData = {
-  conditionName: "Dog — Fungal Dermatosis (Ringworm)",
-  category: "animal",
-  symptoms: [
-    "Circular hair loss patches",
-    "Scaly skin lesions",
-    "Mild redness",
-    "Crusty edges on affected areas",
-  ],
-  severity: "low",
-  organicTreatment:
-    "Clean affected area with diluted apple cider vinegar. Apply coconut oil with tea tree oil (diluted). Keep area clean and dry. Wash bedding in hot water. Boost immune system with proper nutrition.",
-  chemicalTreatment:
-    "Topical antifungal cream (miconazole or clotrimazole) applied twice daily. For widespread cases, oral antifungal medication (griseofulvin or itraconazole) may be prescribed by a veterinarian.",
-  monitoring: [
-    "Take photos every 3-4 days to track healing",
-    "Isolate pet from other animals",
-    "Disinfect grooming tools and living areas",
-    "Watch for spread to other body areas",
-    "Consult a vet if lesions increase or pet shows discomfort",
-  ],
-  confidenceScore: 92,
-};
 
 export default function Index() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<DiagnosticData | null>(null);
+  const [healthyMessage, setHealthyMessage] = useState<string | null>(null);
 
-  const handleAnalyze = () => {
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleAnalyze = async () => {
     if (!selectedImage) return;
 
     setIsAnalyzing(true);
     setResult(null);
+    setHealthyMessage(null);
 
-    // Simulate AI analysis
-    setTimeout(() => {
-      // Randomly pick between plant or animal result for demo
-      const mockResult = Math.random() > 0.5 ? mockPlantResult : mockAnimalResult;
-      setResult(mockResult);
+    try {
+      const imageBase64 = await fileToBase64(selectedImage);
+      
+      const { data, error } = await supabase.functions.invoke("analyze-image", {
+        body: { imageBase64 },
+      });
+
+      if (error) {
+        console.error("Analysis error:", error);
+        toast({
+          title: "Analysis Failed",
+          description: error.message || "Failed to analyze image. Please try again.",
+          variant: "destructive",
+        });
+        setIsAnalyzing(false);
+        return;
+      }
+
+      if (data.error) {
+        toast({
+          title: "Analysis Error",
+          description: data.error,
+          variant: "destructive",
+        });
+        setIsAnalyzing(false);
+        return;
+      }
+
+      if (data.detected === false) {
+        setHealthyMessage(data.message || "No disease or abnormal condition detected.");
+        toast({
+          title: "Good News!",
+          description: "No health issues detected in your image.",
+        });
+      } else {
+        setResult({
+          conditionName: data.conditionName,
+          category: data.category,
+          symptoms: data.symptoms || [],
+          severity: data.severity || "low",
+          organicTreatment: data.organicTreatment || "",
+          chemicalTreatment: data.chemicalTreatment || "",
+          monitoring: data.monitoring || [],
+          confidenceScore: data.confidenceScore || 0,
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   const handleClear = () => {
@@ -84,6 +97,7 @@ export default function Index() {
   const handleNewAnalysis = () => {
     setSelectedImage(null);
     setResult(null);
+    setHealthyMessage(null);
   };
 
   return (
@@ -132,7 +146,7 @@ export default function Index() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 md:py-16">
-        {!result && !isAnalyzing && (
+        {!result && !isAnalyzing && !healthyMessage && (
           <div className="space-y-8 animate-fade-in">
             <UploadZone
               onImageSelect={setSelectedImage}
@@ -157,6 +171,25 @@ export default function Index() {
         )}
 
         {isAnalyzing && <AnalyzingState />}
+
+        {healthyMessage && !result && (
+          <div className="w-full max-w-2xl mx-auto space-y-8 animate-slide-up">
+            <div className="bg-card rounded-2xl shadow-card p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-serif font-semibold text-foreground mb-2">
+                Looking Healthy!
+              </h2>
+              <p className="text-muted-foreground">{healthyMessage}</p>
+            </div>
+            <div className="text-center">
+              <Button variant="outline" size="lg" onClick={handleNewAnalysis}>
+                Analyze Another Image
+              </Button>
+            </div>
+          </div>
+        )}
 
         {result && (
           <div className="space-y-8">
