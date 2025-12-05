@@ -9,15 +9,21 @@ const systemPrompt = `You are an expert diagnostic AI for plant and animal healt
 
 IMPORTANT: You must respond with ONLY valid JSON, no markdown, no code blocks, just raw JSON.
 
+For PLANTS, identify: leaves, fruits, vegetables, stems, roots, flowers, bark
+For ANIMALS, identify: skin, fur, teeth, eyes, nails, wounds, ears, paws
+
 Analyze the image and respond with this exact JSON structure:
 {
   "detected": true/false,
-  "conditionName": "Species — Condition Name (e.g. 'Tomato — Late Blight' or 'Dog — Fungal Dermatosis')",
+  "detectedCategory": "Plant" or "Animal",
+  "detectedSpecies": "Specific species name (e.g., 'Tomato', 'Labrador Retriever', 'Rose', 'Persian Cat')",
+  "detectedPart": "The part being analyzed (e.g., 'Leaf', 'Fruit', 'Skin', 'Eye', 'Fur', 'Stem')",
+  "conditionName": "Disease or condition name (e.g., 'Late Blight', 'Fungal Dermatitis', 'Powdery Mildew')",
   "category": "plant" or "animal",
-  "symptoms": ["symptom 1", "symptom 2", "symptom 3"],
+  "symptoms": ["symptom 1", "symptom 2", "symptom 3", "symptom 4", "symptom 5"],
   "severity": "low" or "medium" or "high",
-  "organicTreatment": "Detailed organic/natural treatment recommendations",
-  "chemicalTreatment": "Detailed chemical/conventional treatment recommendations with disclaimers",
+  "organicTreatment": "Detailed organic/natural treatment and preventive measures",
+  "chemicalTreatment": "Detailed chemical/conventional treatment recommendations with safety disclaimers",
   "monitoring": ["step 1", "step 2", "step 3", "step 4", "step 5"],
   "confidenceScore": 0-100
 }
@@ -26,6 +32,9 @@ If no disease or condition is detected, respond with:
 {
   "detected": false,
   "message": "No disease or abnormal condition detected. The subject appears healthy.",
+  "detectedCategory": "Plant" or "Animal",
+  "detectedSpecies": "Identified species if possible",
+  "detectedPart": "The part being analyzed",
   "category": "plant" or "animal",
   "confidenceScore": 0-100
 }

@@ -3,6 +3,9 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface DiagnosticData {
+  detectedCategory: string;
+  detectedSpecies: string;
+  detectedPart: string;
   conditionName: string;
   category: "plant" | "animal";
   symptoms: string[];
@@ -63,7 +66,7 @@ export function DiagnosticResult({ data }: DiagnosticResultProps) {
               </div>
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  {data.category === "plant" ? "Plant Condition" : "Animal Condition"}
+                  Disease Identified
                 </p>
                 <CardTitle className="text-xl md:text-2xl font-serif mt-1">
                   {data.conditionName}
@@ -82,16 +85,39 @@ export function DiagnosticResult({ data }: DiagnosticResultProps) {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-muted-foreground">Confidence Score</span>
-            <span className="font-semibold text-foreground">{data.confidenceScore}%</span>
+        <CardContent className="space-y-4">
+          {/* Detection Details */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-xs text-muted-foreground mb-1">Category</p>
+              <p className="font-medium text-sm">{data.detectedCategory}</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-xs text-muted-foreground mb-1">Species</p>
+              <p className="font-medium text-sm">{data.detectedSpecies}</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-xs text-muted-foreground mb-1">Part Analyzed</p>
+              <p className="font-medium text-sm">{data.detectedPart}</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-xs text-muted-foreground mb-1">Confidence</p>
+              <p className="font-medium text-sm">{data.confidenceScore}%</p>
+            </div>
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-700"
-              style={{ width: `${data.confidenceScore}%` }}
-            />
+          
+          {/* Confidence Bar */}
+          <div>
+            <div className="flex items-center justify-between text-sm mb-2">
+              <span className="text-muted-foreground">Analysis Confidence</span>
+              <span className="font-semibold text-foreground">{data.confidenceScore}%</span>
+            </div>
+            <div className="h-3 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-700"
+                style={{ width: `${data.confidenceScore}%` }}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

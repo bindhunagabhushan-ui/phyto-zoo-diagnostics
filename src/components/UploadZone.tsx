@@ -2,6 +2,7 @@ import { useCallback, useState, useRef } from "react";
 import { Upload, FolderOpen, Camera, Image, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CameraModal } from "./CameraModal";
 
 interface UploadZoneProps {
   onImageSelect: (file: File) => void;
@@ -12,8 +13,8 @@ interface UploadZoneProps {
 export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -40,7 +41,6 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
     onClear();
     setPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
-    if (cameraInputRef.current) cameraInputRef.current.value = "";
   };
 
   const openFileBrowser = () => {
@@ -48,7 +48,12 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
   };
 
   const openCamera = () => {
-    cameraInputRef.current?.click();
+    setIsCameraOpen(true);
+  };
+
+  const handleCameraCapture = (file: File) => {
+    onImageSelect(file);
+    setPreview(URL.createObjectURL(file));
   };
 
   if (selectedImage && preview) {
@@ -76,19 +81,18 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-6">
-      {/* Hidden file inputs */}
+      {/* Camera Modal */}
+      <CameraModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCapture={handleCameraCapture}
+      />
+
+      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
         onChange={handleFileChange}
         className="hidden"
       />
