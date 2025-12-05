@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { UploadZone } from "@/components/UploadZone";
 import { DiagnosticResult, DiagnosticData } from "@/components/DiagnosticResult";
 import { AnalyzingState } from "@/components/AnalyzingState";
+import { PhytoBot } from "@/components/PhytoBot";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import heroBg from "@/assets/hero-bg.png";
@@ -105,10 +107,18 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-40">
+        <ThemeToggle />
+      </div>
+
+      {/* PhytoBot Chatbot */}
+      <PhytoBot />
+
       {/* Hero Section */}
       <header className="relative overflow-hidden">
         <div
-          className="absolute inset-0 opacity-30"
+          className="absolute inset-0 opacity-30 dark:opacity-20"
           style={{
             backgroundImage: `url(${heroBg})`,
             backgroundSize: "cover",
