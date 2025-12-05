@@ -205,8 +205,11 @@ export default function Index() {
 
       {/* Footer */}
       <footer className="border-t border-border py-8 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="container mx-auto px-4 text-center space-y-3">
+          <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+            ⚠️ This tool provides preliminary disease detection. Consult experts for confirmation.
+          </p>
+          <p className="text-xs text-muted-foreground">
             PhytoZoo uses AI for preliminary screening. Always consult professionals for accurate diagnosis.
           </p>
         </div>

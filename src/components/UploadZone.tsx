@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
-import { Upload, Image, X } from "lucide-react";
+import { useCallback, useState, useRef } from "react";
+import { Upload, FolderOpen, Camera, Image, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface UploadZoneProps {
   onImageSelect: (file: File) => void;
@@ -11,6 +12,8 @@ interface UploadZoneProps {
 export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -36,6 +39,16 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
   const handleClear = () => {
     onClear();
     setPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  };
+
+  const openFileBrowser = () => {
+    fileInputRef.current?.click();
+  };
+
+  const openCamera = () => {
+    cameraInputRef.current?.click();
   };
 
   if (selectedImage && preview) {
@@ -62,54 +75,107 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
   }
 
   return (
-    <div
-      onDrop={handleDrop}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setIsDragOver(true);
-      }}
-      onDragLeave={() => setIsDragOver(false)}
-      className={cn(
-        "relative w-full max-w-xl mx-auto p-12 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer group",
-        isDragOver
-          ? "border-primary bg-primary/5 scale-[1.02]"
-          : "border-border hover:border-primary/50 hover:bg-muted/50"
-      )}
-    >
+    <div className="w-full max-w-xl mx-auto space-y-6">
+      {/* Hidden file inputs */}
       <input
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={handleFileChange}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        className="hidden"
       />
-      <div className="flex flex-col items-center gap-4 pointer-events-none">
-        <div
-          className={cn(
-            "p-5 rounded-2xl transition-all duration-300",
-            isDragOver
-              ? "bg-primary text-primary-foreground scale-110"
-              : "bg-secondary text-primary group-hover:bg-primary/10"
-          )}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
+      {/* Drag and Drop Zone */}
+      <div
+        onDrop={handleDrop}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => setIsDragOver(false)}
+        onClick={openFileBrowser}
+        className={cn(
+          "relative w-full p-10 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer group",
+          isDragOver
+            ? "border-primary bg-primary/5 scale-[1.02]"
+            : "border-border hover:border-primary/50 hover:bg-muted/50"
+        )}
+      >
+        <div className="flex flex-col items-center gap-4 pointer-events-none">
+          <div
+            className={cn(
+              "p-4 rounded-2xl transition-all duration-300",
+              isDragOver
+                ? "bg-primary text-primary-foreground scale-110"
+                : "bg-secondary text-primary group-hover:bg-primary/10"
+            )}
+          >
+            {isDragOver ? (
+              <Image className="w-8 h-8" />
+            ) : (
+              <Upload className="w-8 h-8" />
+            )}
+          </div>
+          <div className="text-center">
+            <p className="font-semibold text-lg text-foreground">
+              {isDragOver ? "Drop your image here" : "Drag & drop image"}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              or click to browse files
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Upload Method Buttons */}
+      <div className="grid grid-cols-3 gap-3">
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={openFileBrowser}
+          className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-primary/5 hover:border-primary/50"
         >
-          {isDragOver ? (
-            <Image className="w-10 h-10" />
-          ) : (
-            <Upload className="w-10 h-10" />
-          )}
-        </div>
-        <div className="text-center">
-          <p className="font-semibold text-lg text-foreground">
-            {isDragOver ? "Drop your image here" : "Upload an image"}
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Drag & drop or click to browse
-          </p>
-          <p className="text-xs text-muted-foreground mt-3">
-            Plants: leaves, fruits, stems, vegetables
-            <br />
-            Animals: skin, fur, eyes, wounds
-          </p>
-        </div>
+          <Upload className="w-5 h-5 text-primary" />
+          <span className="text-xs font-medium">Upload</span>
+        </Button>
+        
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={openFileBrowser}
+          className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-primary/5 hover:border-primary/50"
+        >
+          <FolderOpen className="w-5 h-5 text-primary" />
+          <span className="text-xs font-medium">Browse</span>
+        </Button>
+        
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={openCamera}
+          className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-accent/10 hover:border-accent/50"
+        >
+          <Camera className="w-5 h-5 text-accent" />
+          <span className="text-xs font-medium">Camera</span>
+        </Button>
+      </div>
+
+      {/* Supported types */}
+      <div className="text-center space-y-1">
+        <p className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground/80">Plants:</span> leaves, fruits, stems, vegetables
+        </p>
+        <p className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground/80">Animals:</span> skin, fur, eyes, wounds, teeth, nails
+        </p>
       </div>
     </div>
   );
