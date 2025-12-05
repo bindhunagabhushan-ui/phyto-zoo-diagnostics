@@ -1,6 +1,8 @@
-import { AlertTriangle, CheckCircle, Leaf, Shield, Activity, TrendingUp, Info, Stethoscope } from "lucide-react";
+import { AlertTriangle, CheckCircle, Leaf, Shield, Activity, TrendingUp, Info, Stethoscope, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 export interface DiagnosticData {
   detectedCategory: string;
@@ -44,6 +46,58 @@ const severityConfig = {
 export function DiagnosticResult({ data }: DiagnosticResultProps) {
   const severity = severityConfig[data.severity];
   const SeverityIcon = severity.icon;
+
+  const downloadReport = () => {
+    const report = `
+PHYTOZOO DIAGNOSTIC REPORT
+==========================
+Generated: ${new Date().toLocaleString()}
+
+DETECTION SUMMARY
+-----------------
+Category: ${data.detectedCategory}
+Species: ${data.detectedSpecies}
+Part Analyzed: ${data.detectedPart}
+Condition: ${data.conditionName}
+Severity: ${data.severity.toUpperCase()}
+Confidence: ${data.confidenceScore}%
+
+SYMPTOMS DETECTED
+-----------------
+${data.symptoms.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+ORGANIC PREVENTIVE MEASURES
+---------------------------
+${data.organicTreatment}
+
+CHEMICAL PREVENTIVE MEASURES
+----------------------------
+${data.chemicalTreatment}
+
+RECOMMENDED MONITORING STEPS
+----------------------------
+${data.monitoring.map((m, i) => `${i + 1}. ${m}`).join('\n')}
+
+DISCLAIMER
+----------
+This report is for preliminary screening only. Always consult qualified professionals for accurate diagnosis and treatment.
+`;
+
+    const blob = new Blob([report], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `phytozoo-report-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Report Downloaded",
+      description: "Your diagnostic report has been saved.",
+    });
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 animate-slide-up">
@@ -209,6 +263,19 @@ export function DiagnosticResult({ data }: DiagnosticResultProps) {
           </ul>
         </CardContent>
       </Card>
+
+      {/* Download Report & Professional Consultation */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={downloadReport}
+          className="flex items-center gap-2"
+        >
+          <Download className="w-4 h-4" />
+          Download Full Report
+        </Button>
+      </div>
 
       {/* Professional Consultation Reminder */}
       <div className="bg-muted/50 rounded-xl p-5 border border-border">
