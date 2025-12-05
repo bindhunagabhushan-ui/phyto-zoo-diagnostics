@@ -66,6 +66,9 @@ export default function Index() {
         });
       } else {
         setResult({
+          detectedCategory: data.detectedCategory || (data.category === "plant" ? "Plant" : "Animal"),
+          detectedSpecies: data.detectedSpecies || "Unknown",
+          detectedPart: data.detectedPart || "Unknown",
           conditionName: data.conditionName,
           category: data.category,
           symptoms: data.symptoms || [],
