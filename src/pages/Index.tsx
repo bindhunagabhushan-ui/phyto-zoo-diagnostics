@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Leaf, PawPrint, Sparkles, ArrowRight, CheckCircle, Zap, Shield, Heart, Brain } from "lucide-react";
+import { Leaf, PawPrint, Sparkles, ArrowRight, CheckCircle, Zap, Shield, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UploadZone } from "@/components/UploadZone";
 import { DiagnosticResult, DiagnosticData } from "@/components/DiagnosticResult";
 import { AnalyzingState } from "@/components/AnalyzingState";
 import { PhytoBot } from "@/components/PhytoBot";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import heroBg from "@/assets/hero-bg.png";
@@ -106,17 +107,15 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Theme Toggle */}
-      <div className="fixed top-4 right-4 z-40">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Navigation */}
+      <Navbar />
 
       {/* PhytoBot Chatbot */}
       <PhytoBot />
 
       {/* Hero Section */}
-      <header className="relative overflow-hidden">
+      <header className="relative overflow-hidden pt-16">
         <div
           className="absolute inset-0 opacity-30 dark:opacity-20"
           style={{
@@ -127,7 +126,7 @@ export default function Index() {
         />
         <div className="absolute inset-0 gradient-hero" />
         
-        <div className="relative container mx-auto px-4 py-16 md:py-24">
+        <div className="relative container mx-auto px-4 py-16 md:py-20">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary text-sm font-medium mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
@@ -179,7 +178,7 @@ export default function Index() {
             
             <div className="glass-card rounded-2xl p-5 text-center hover:scale-105 transition-transform cursor-default">
               <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-green-600" />
+                <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="font-semibold text-sm text-foreground">Prevention Tips</h3>
               <p className="text-xs text-muted-foreground mt-1">Organic & chemical</p>
@@ -187,17 +186,17 @@ export default function Index() {
             
             <div className="glass-card rounded-2xl p-5 text-center hover:scale-105 transition-transform cursor-default">
               <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center">
-                <Brain className="w-6 h-6 text-blue-600" />
+                <Brain className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="font-semibold text-sm text-foreground">AI Assistant</h3>
-              <p className="text-xs text-muted-foreground mt-1">Ask PhytoBot</p>
+              <h3 className="font-semibold text-sm text-foreground">Voice Assistant</h3>
+              <p className="text-xs text-muted-foreground mt-1">Ask PhytoBot 🎤</p>
             </div>
           </div>
         </section>
       )}
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 md:py-12">
+      <main className="container mx-auto px-4 py-8 md:py-12 flex-1">
         {!result && !isAnalyzing && !healthyMessage && (
           <div className="space-y-8 animate-fade-in">
             <UploadZone
@@ -257,16 +256,7 @@ export default function Index() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8 mt-16">
-        <div className="container mx-auto px-4 text-center space-y-3">
-          <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
-            ⚠️ This tool provides preliminary disease detection. Consult experts for confirmation.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            PhytoZoo uses AI for preliminary screening. Always consult professionals for accurate diagnosis.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
