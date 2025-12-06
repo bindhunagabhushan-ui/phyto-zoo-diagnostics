@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Leaf, PawPrint, Sparkles, ArrowRight, CheckCircle } from "lucide-react";
+import { Leaf, PawPrint, Sparkles, ArrowRight, CheckCircle, Zap, Shield, Heart, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UploadZone } from "@/components/UploadZone";
 import { DiagnosticResult, DiagnosticData } from "@/components/DiagnosticResult";
@@ -129,7 +129,7 @@ export default function Index() {
         
         <div className="relative container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary text-sm font-medium mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
               AI-Powered Health Diagnostics
             </div>
@@ -157,8 +157,47 @@ export default function Index() {
         </div>
       </header>
 
+      {/* Feature Cards Dashboard */}
+      {!result && !isAnalyzing && !healthyMessage && !selectedImage && (
+        <section className="container mx-auto px-4 -mt-6 mb-8 animate-fade-in">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="glass-card rounded-2xl p-5 text-center hover:scale-105 transition-transform cursor-default">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <Leaf className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-sm text-foreground">Plant Detector</h3>
+              <p className="text-xs text-muted-foreground mt-1">Leaves, fruits, stems</p>
+            </div>
+            
+            <div className="glass-card rounded-2xl p-5 text-center hover:scale-105 transition-transform cursor-default">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+                <PawPrint className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="font-semibold text-sm text-foreground">Animal Detector</h3>
+              <p className="text-xs text-muted-foreground mt-1">Skin, fur, eyes, wounds</p>
+            </div>
+            
+            <div className="glass-card rounded-2xl p-5 text-center hover:scale-105 transition-transform cursor-default">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center">
+                <Shield className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="font-semibold text-sm text-foreground">Prevention Tips</h3>
+              <p className="text-xs text-muted-foreground mt-1">Organic & chemical</p>
+            </div>
+            
+            <div className="glass-card rounded-2xl p-5 text-center hover:scale-105 transition-transform cursor-default">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center">
+                <Brain className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-sm text-foreground">AI Assistant</h3>
+              <p className="text-xs text-muted-foreground mt-1">Ask PhytoBot</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 md:py-16">
+      <main className="container mx-auto px-4 py-8 md:py-12">
         {!result && !isAnalyzing && !healthyMessage && (
           <div className="space-y-8 animate-fade-in">
             <UploadZone
@@ -175,8 +214,9 @@ export default function Index() {
                   onClick={handleAnalyze}
                   className="group"
                 >
+                  <Zap className="w-5 h-5 mr-2" />
                   Analyze Image
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
             )}
@@ -187,8 +227,8 @@ export default function Index() {
 
         {healthyMessage && !result && (
           <div className="w-full max-w-2xl mx-auto space-y-8 animate-slide-up">
-            <div className="bg-card rounded-2xl shadow-card p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="glass-card rounded-2xl shadow-card p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center animate-pulse-soft">
                 <CheckCircle className="w-8 h-8 text-primary" />
               </div>
               <h2 className="text-2xl font-serif font-semibold text-foreground mb-2">
