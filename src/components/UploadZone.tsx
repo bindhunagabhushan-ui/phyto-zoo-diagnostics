@@ -92,7 +92,7 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpg,image/jpeg,image/webp"
         onChange={handleFileChange}
         className="hidden"
       />
@@ -107,7 +107,7 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
         onDragLeave={() => setIsDragOver(false)}
         onClick={openFileBrowser}
         className={cn(
-          "relative w-full p-10 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer group",
+          "relative w-full p-10 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer group glass-card",
           isDragOver
             ? "border-primary bg-primary/5 scale-[1.02]"
             : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -145,9 +145,9 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
           variant="outline"
           size="lg"
           onClick={openFileBrowser}
-          className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-primary/5 hover:border-primary/50"
+          className="flex flex-col items-center gap-2 h-auto py-5 glass-card border-border/50 hover:bg-primary/5 hover:border-primary/50 transition-all"
         >
-          <Upload className="w-5 h-5 text-primary" />
+          <Upload className="w-6 h-6 text-primary" />
           <span className="text-xs font-medium">Upload</span>
         </Button>
         
@@ -155,30 +155,37 @@ export function UploadZone({ onImageSelect, selectedImage, onClear }: UploadZone
           variant="outline"
           size="lg"
           onClick={openFileBrowser}
-          className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-primary/5 hover:border-primary/50"
+          className="flex flex-col items-center gap-2 h-auto py-5 glass-card border-border/50 hover:bg-primary/5 hover:border-primary/50 transition-all"
         >
-          <FolderOpen className="w-5 h-5 text-primary" />
+          <FolderOpen className="w-6 h-6 text-primary" />
           <span className="text-xs font-medium">Browse</span>
         </Button>
         
         <Button
           variant="outline"
           size="lg"
-          onClick={openCamera}
-          className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-accent/10 hover:border-accent/50"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openCamera();
+          }}
+          className="flex flex-col items-center gap-2 h-auto py-5 glass-card border-border/50 hover:bg-accent/5 hover:border-accent/50 transition-all"
         >
-          <Camera className="w-5 h-5 text-accent" />
+          <Camera className="w-6 h-6 text-accent" />
           <span className="text-xs font-medium">Camera</span>
         </Button>
       </div>
 
       {/* Supported types */}
-      <div className="text-center space-y-1">
+      <div className="text-center space-y-1 glass-card rounded-xl p-4">
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground/80">Plants:</span> leaves, fruits, stems, vegetables
+          <span className="font-medium text-primary">Plants:</span> leaves, fruits, stems, vegetables
         </p>
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground/80">Animals:</span> skin, fur, eyes, wounds, teeth, nails
+          <span className="font-medium text-accent">Animals:</span> skin, fur, eyes, wounds, teeth, nails
+        </p>
+        <p className="text-xs text-muted-foreground/70 mt-2">
+          Supports: PNG, JPG, JPEG, WebP
         </p>
       </div>
     </div>
