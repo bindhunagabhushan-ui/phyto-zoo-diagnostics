@@ -14,16 +14,240 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alert_zones: {
+        Row: {
+          case_count: number | null
+          created_at: string
+          disease_name: string
+          id: string
+          is_active: boolean | null
+          latitude: number
+          longitude: number
+          name: string
+          radius_km: number | null
+          severity: string
+          updated_at: string
+        }
+        Insert: {
+          case_count?: number | null
+          created_at?: string
+          disease_name: string
+          id?: string
+          is_active?: boolean | null
+          latitude: number
+          longitude: number
+          name: string
+          radius_km?: number | null
+          severity: string
+          updated_at?: string
+        }
+        Update: {
+          case_count?: number | null
+          created_at?: string
+          disease_name?: string
+          id?: string
+          is_active?: boolean | null
+          latitude?: number
+          longitude?: number
+          name?: string
+          radius_km?: number | null
+          severity?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          category: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          title: string
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          title: string
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          title?: string
+          type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scan_history: {
+        Row: {
+          category: string
+          chemical_treatment: string[] | null
+          confidence_score: number | null
+          created_at: string
+          disease_name: string | null
+          id: string
+          image_url: string | null
+          is_synced: boolean | null
+          latitude: number | null
+          location_name: string | null
+          longitude: number | null
+          notes: string | null
+          organic_treatment: string[] | null
+          prevention_steps: string[] | null
+          severity: string | null
+          species: string | null
+          symptoms: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          chemical_treatment?: string[] | null
+          confidence_score?: number | null
+          created_at?: string
+          disease_name?: string | null
+          id?: string
+          image_url?: string | null
+          is_synced?: boolean | null
+          latitude?: number | null
+          location_name?: string | null
+          longitude?: number | null
+          notes?: string | null
+          organic_treatment?: string[] | null
+          prevention_steps?: string[] | null
+          severity?: string | null
+          species?: string | null
+          symptoms?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          chemical_treatment?: string[] | null
+          confidence_score?: number | null
+          created_at?: string
+          disease_name?: string | null
+          id?: string
+          image_url?: string | null
+          is_synced?: boolean | null
+          latitude?: number | null
+          location_name?: string | null
+          longitude?: number | null
+          notes?: string | null
+          organic_treatment?: string[] | null
+          prevention_steps?: string[] | null
+          severity?: string | null
+          species?: string | null
+          symptoms?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +374,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
