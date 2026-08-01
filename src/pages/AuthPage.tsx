@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,9 @@ export default function AuthPage() {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const rawNext = searchParams.get('next');
+  const nextPath = rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/';
 
   const validateLogin = () => {
     const newErrors: Record<string, string> = {};
@@ -93,7 +96,7 @@ export default function AuthPage() {
         title: 'Welcome back!',
         description: 'You have been signed in successfully'
       });
-      navigate('/');
+      navigate(nextPath);
     }
   };
 
@@ -102,7 +105,7 @@ export default function AuthPage() {
     if (!validateSignup()) return;
     
     setIsLoading(true);
-    const { error } = await signUp(signupEmail, signupPassword, signupName);
+    const { error } = await signUp(signupEmail, signupPassword, signupName, nextPath);
     setIsLoading(false);
     
     if (error) {
@@ -120,7 +123,7 @@ export default function AuthPage() {
         title: 'Account created!',
         description: 'Welcome to PhytoZoo'
       });
-      navigate('/');
+      navigate(nextPath);
     }
   };
 

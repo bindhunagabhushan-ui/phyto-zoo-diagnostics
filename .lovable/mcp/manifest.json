@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://kucuxynewcrqxbobbzql.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "phytozoo-health-check",
+      "version": "0.1.0",
+      "title": "PhytoZoo Health Check"
+    },
+    "tools": [
+      {
+        "name": "list_scans",
+        "title": "List scans",
+        "description": "List the signed-in user's most recent plant or animal health scans, newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "How many scans to return (default 10)."
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "plant",
+                "animal"
+              ],
+              "description": "Filter by scan category."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_scan",
+        "title": "Get scan details",
+        "description": "Get the full diagnostic details of one of the signed-in user's scans, including symptoms and treatments.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The scan id."
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "log_scan",
+        "title": "Log a scan",
+        "description": "Record a new plant or animal health observation in the signed-in user's scan history.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "enum": [
+                "plant",
+                "animal"
+              ],
+              "description": "Whether the subject is a plant or an animal."
+            },
+            "species": {
+              "type": "string",
+              "description": "Species or crop name."
+            },
+            "disease_name": {
+              "type": "string",
+              "description": "Suspected disease or condition."
+            },
+            "severity": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Severity of the condition."
+            },
+            "symptoms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Observed symptoms."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Free-form notes."
+            },
+            "location_name": {
+              "type": "string",
+              "description": "Where the observation was made."
+            }
+          },
+          "required": [
+            "category"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_alert_zones",
+        "title": "List outbreak alert zones",
+        "description": "List active disease outbreak alert zones tracked by PhytoZoo.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "How many zones to return (default 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
