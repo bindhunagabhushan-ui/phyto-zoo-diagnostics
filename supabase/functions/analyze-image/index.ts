@@ -1,9 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // ~10MB of base64 payload
+const ALLOWED_MIME = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+async function requireUser(req: Request) {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    { global: { headers: { Authorization: authHeader } } }
+  );
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return data.user;
+}
+
 
 const systemPrompt = `You are an expert diagnostic AI for plant and animal health. Analyze the uploaded image and determine if there are any signs of disease, pest infestation, or abnormal condition.
 
