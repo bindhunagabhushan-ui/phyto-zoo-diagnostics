@@ -119,7 +119,7 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages,
+          ...sanitizedMessages,
         ],
       }),
     });
